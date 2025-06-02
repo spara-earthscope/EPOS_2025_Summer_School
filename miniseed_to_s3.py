@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 from datetime import date
 
 # s3 setup
-session = boto3.Session(profile_name="spara")
+session = boto3.Session(profile_name="my_profile")
 s3_client = session.client('s3')
 s3 = session.resource('s3')
 bucket_name = "my-miniseed"
