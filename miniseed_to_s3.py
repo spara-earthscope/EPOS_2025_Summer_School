@@ -4,12 +4,26 @@ import boto3
 from botocore.exceptions import ClientError
 from datetime import date
 
-# csv format
-# station,"start_date","end_date"
-# XD.MTAN.*,1/1/0194,12/31/1995
+# s3 setup
+session = boto3.Session(profile_name="spara")
+s3_client = session.client('s3')
+s3 = session.resource('s3')
+bucket_name = "my-miniseed"
+region_name = "us-east-2"
+try:
+    s3_client.head_bucket(Bucket = bucket_name)
+except ClientError as error:
+    error_code = int(error.response['Error']['Code'])
+    if  error_code == 404:
+        s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': region_name})
 
+
+# SAGE archive
 URL = "http://service.iris.edu/fdsnws/dataselect/1/query?"
 
+# csv format
+# station,"start_date","end_date"
+# XD.MTAN.*,1/1/1994,12/31/1995
 def parse_row(row):
     nsl = row[0].split('.')
     net = nsl[0]
@@ -47,20 +61,6 @@ def parse_stations(file):
 
 def upload_to_s3(station):
 
-    # s3 setup
-    # s3_client = boto3.client('s3')
-    session = boto3.Session(profile_name="spara")
-    s3_client = session.client('s3')
-    s3 = session.resource('s3')
-    bucket_name = "my-miniseed"
-    region_name = "us-east-2"
-    try:
-        s3_client.head_bucket(Bucket = bucket_name)
-    except ClientError as error:
-      error_code = int(error.response['Error']['Code'])
-      if  error_code == 404:
-        s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': region_name})
-
     # duration
     start_year = int(station["start_time"][:4])
     end_year = int(station["end_time"][:4])
@@ -80,8 +80,8 @@ def upload_to_s3(station):
         else:
             year = start_year
 
-        # STATION.NETWORK.YEAR.DAYOFYEAR
-        # 'miniseed/TA/2004/365/A04A.TA.2004.365#2'
+        # file name format: STATION.NETWORK.YEAR.DAYOFYEAR
+        # bucket path format: 'miniseed/TA/2004/365/A04A.TA.2004.365#2'
         s3_path_prefix = "/".join([station["station"], str(year), str(day)])
         file = ".".join([station["station"], station["network"], str(year), str(day)])
         key = "/".join([s3_path_prefix,file])
