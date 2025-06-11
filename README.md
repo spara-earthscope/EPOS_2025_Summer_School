@@ -1,14 +1,5 @@
-# Example for Accessing EarthScope Data
+# Examples for Accessing EarthScope Data
 
-`miniseed_to_s3.py` copies data from EarthScopes SAGE archive to an AWS s3 bucket that mimics the directory structure and file naming conventions of the archive. Note that the 'miniseed' bucket name is already taken, 'my-miniseed' is used in this example.
-
-`download_miniseed.py` demonstrates how to download miniseed data from S3.
-
-Create the conda environment:
-
-```
-conda env create -f environment.yml
-```
-
+This notebook contains code examples for accessing SAGE and GAGE repositories. It covers commandline tools and webservices. It also includes an example for working with data in AWS S3.
 
 
