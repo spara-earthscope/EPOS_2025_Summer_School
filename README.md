@@ -14,3 +14,11 @@ Alternatively, you can use pip to install dependencies, but it is not guaranteed
 pip install -r requirements.txt
 ```
 
+To run locaally:
+
+```
+jupyter lab
+```
+
+This will open a jupyter lab instance in a browser window.
+
